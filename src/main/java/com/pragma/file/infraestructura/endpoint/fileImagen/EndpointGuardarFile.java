@@ -35,7 +35,12 @@ public class EndpointGuardarFile {
             @RequestParam("numero de identificacion") Integer numero,
             @RequestParam("file") MultipartFile file
             ) {
-        manejadorFileImagen.guardar(numero, file);
-        return new ResponseEntity<>(new Mensaje("true"), HttpStatus.CREATED);
+        if(manejadorFileImagen.existeFile(numero) == true) {
+            manejadorFileImagen.guardar(numero, file);
+            return new ResponseEntity<>(new Mensaje("true"), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + "ya tiene registrada una imagen"), HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
