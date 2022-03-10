@@ -37,10 +37,10 @@ public class EndpointEliminarFile {
     ) {
         if(manejadorFileImagen.existeFile(numero) == true) {
             manejadorFileImagen.eliminar(numero);
-            return new ResponseEntity<>(new Mensaje("true"), HttpStatus.OK);
+            return new ResponseEntity<>(new Mensaje("se elimino el archivo"), HttpStatus.OK);
 
         } else {
-            return new ResponseEntity<>(new Mensaje("false"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Mensaje("no se encontro el archivo del cliente con identificacion " + numero), HttpStatus.NOT_FOUND);
         }
     }
 

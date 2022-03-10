@@ -37,9 +37,9 @@ public class EndpointActualizarFile {
     ) {
         if(manejadorFileImagen.existeFile(identificacion) == true) {
             manejadorFileImagen.actualizar(identificacion, file);
-            return new ResponseEntity<>(new Mensaje("true"), HttpStatus.OK);
+            return new ResponseEntity<>(new Mensaje("archivo del cliente " + identificacion + " actualizado"), HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(new Mensaje("false"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Mensaje("el cliente con la identificacion" + identificacion + " no tiene imagen"), HttpStatus.NOT_FOUND);
         }
     }
 }

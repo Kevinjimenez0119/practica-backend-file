@@ -42,7 +42,7 @@ public class EndpointBuscarPorIdentificacion {
             return new ResponseEntity(fileImagenDto, HttpStatus.OK);
 
         }else{
-            return new ResponseEntity<>(new Mensaje("false"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Mensaje("no se encontro archivo del cliente " + numero), HttpStatus.NO_CONTENT);
 
         }
     }
