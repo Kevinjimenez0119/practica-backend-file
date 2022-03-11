@@ -1,6 +1,8 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
+import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.modelo.Mensaje;
@@ -25,6 +27,9 @@ public class EndpointBuscarPorIdentificacion {
     @Autowired
     private ManejadorFileImagen manejadorFileImagen;
 
+    @Autowired
+    private ManejadorClienteClient manejadorClienteClient;
+
     @GetMapping("/identificacion/{numero}")
     @ApiOperation("obtiene un archivo por identificacion")
     @ApiResponses({
@@ -42,7 +47,12 @@ public class EndpointBuscarPorIdentificacion {
             return new ResponseEntity(fileImagenDto, HttpStatus.OK);
 
         }else{
-            return new ResponseEntity<>(new Mensaje("no se encontro archivo del cliente " + numero), HttpStatus.NO_CONTENT);
+            ClienteDto clienteDto= manejadorClienteClient.obtenerCliente(numero);
+            if(clienteDto != null) {
+                return new ResponseEntity<>(new Mensaje("no se encontro archivo del cliente " + numero), HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(new Mensaje("cliente no registrado, registrelo en el servicio cliente " + numero), HttpStatus.NOT_FOUND);
+            }
 
         }
     }

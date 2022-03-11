@@ -25,6 +25,8 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	// cloud
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
@@ -32,6 +34,16 @@ dependencies {
 	implementation 'com.github.javafaker:javafaker:1.0.2'
 	// MongoDB
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '2.6.3'
+}
+
+ext {
+	set('springCloudVersion', "Hoxton.SR11")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 test {

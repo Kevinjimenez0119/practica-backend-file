@@ -1,5 +1,6 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
+import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.Mensaje;
@@ -26,20 +27,27 @@ public class EndpointGuardarFile {
     @Autowired
     private ManejadorFileImagen manejadorFileImagen;
 
+    @Autowired
+    private ManejadorClienteClient manejadorClienteClient;
+
     @PostMapping()
     @ApiOperation("guarda el archivo")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
     public ResponseEntity<?> guardarFile(
-            @RequestParam("numero de identificacion") Integer numero,
+            @RequestPart("numero de identificacion") Integer numero,
             @RequestParam("file") MultipartFile file
             ) {
-        if(manejadorFileImagen.existeFile(numero) == true) {
-            manejadorFileImagen.guardar(numero, file);
-            return new ResponseEntity<>(new Mensaje("true"), HttpStatus.CREATED);
+        if(manejadorFileImagen.existeFile(numero) != true) {
+            if(manejadorClienteClient.obtenerCliente(numero) !=null) {
+                manejadorFileImagen.guardar(numero, file);
+                return new ResponseEntity<>(new Mensaje("true"), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + " no esta registrado"), HttpStatus.NOT_FOUND);
+            }
         } else {
-            return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + "ya tiene registrada una imagen"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + " ya tiene registrada una imagen"), HttpStatus.BAD_REQUEST);
         }
 
     }

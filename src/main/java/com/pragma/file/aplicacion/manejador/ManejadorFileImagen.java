@@ -1,8 +1,7 @@
 package com.pragma.file.aplicacion.manejador;
 
-import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
-import com.pragma.file.dominio.useCase.FileImagen.FileImagenUseCase;
+import com.pragma.file.dominio.useCase.fileImagen.FileImagenUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 

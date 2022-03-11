@@ -1,6 +1,5 @@
-package com.pragma.file.dominio.useCase.FileImagen;
+package com.pragma.file.dominio.useCase.fileImagen;
 
-import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.service.FileImagenInterfaceService;
 import lombok.RequiredArgsConstructor;
