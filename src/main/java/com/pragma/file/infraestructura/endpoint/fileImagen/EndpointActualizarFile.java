@@ -1,8 +1,11 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
+import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.Mensaje;
+import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -29,17 +32,17 @@ public class EndpointActualizarFile {
     @ApiOperation("actualiza un cliente")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "no se encontro el archivo")
+            @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
     public ResponseEntity<?> actualizar(
-            @RequestPart Integer identificacion,
+            @ModelAttribute("cliente") FileDto fileDto,
             @RequestParam("file") MultipartFile file
     ) {
-        if(manejadorFileImagen.existeFile(identificacion) == true) {
-            manejadorFileImagen.actualizar(identificacion, file);
-            return new ResponseEntity<>(new Mensaje("archivo del cliente " + identificacion + " actualizado"), HttpStatus.OK);
+        if(manejadorFileImagen.existeFile(fileDto.getIdentificacion()) == true) {
+            manejadorFileImagen.actualizar(fileDto.getIdentificacion(), file);
+            return new ResponseEntity<>(new Mensaje("archivo del cliente " + fileDto.getIdentificacion() + " actualizado"), HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(new Mensaje("el cliente con la identificacion" + identificacion + " no tiene imagen"), HttpStatus.NOT_FOUND);
+            throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(fileDto.getIdentificacion().toString()));
         }
     }
 }

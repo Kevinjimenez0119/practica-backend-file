@@ -1,8 +1,10 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.modelo.Mensaje;
+import com.pragma.file.infraestructura.exceptions.LogicException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -32,13 +34,13 @@ public class EndpointListarFiles {
     @ApiOperation("obtiene una lista de todos los archivos")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = FileImagenDto.class),
-            @ApiResponse(code = 204, message = "no hay ningun archivo registrado")
+            @ApiResponse(code = 204, message = "No hay registros")
     })
     public ResponseEntity<?> listarFiles() {
         List<FileImagenDto> fileList = manejadorFileImagen.listarTodo();
         if(fileList.isEmpty())
         {
-            return new ResponseEntity<>(new Mensaje("No hay registros"), HttpStatus.NO_CONTENT);
+            throw new LogicException("code", HttpStatus.CONFLICT, ErrorsUtils.sinRegistros());
         }
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }

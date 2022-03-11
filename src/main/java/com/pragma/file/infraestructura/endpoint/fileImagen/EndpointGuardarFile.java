@@ -2,8 +2,11 @@ package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.Mensaje;
+import com.pragma.file.infraestructura.exceptions.LogicException;
+import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -33,21 +36,23 @@ public class EndpointGuardarFile {
     @PostMapping()
     @ApiOperation("guarda el archivo")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK")
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "la identificacion ya tiene un archivo"),
+            @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
     public ResponseEntity<?> guardarFile(
-            @RequestPart("numero de identificacion") Integer numero,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            @ModelAttribute("cliente") FileDto fileDto
             ) {
-        if(manejadorFileImagen.existeFile(numero) != true) {
-            if(manejadorClienteClient.obtenerCliente(numero) !=null) {
-                manejadorFileImagen.guardar(numero, file);
+        if(manejadorFileImagen.existeFile(fileDto.getIdentificacion()) != true) {
+            if(manejadorClienteClient.obtenerCliente(fileDto.getIdentificacion()) !=null) {
+                manejadorFileImagen.guardar(fileDto.getIdentificacion(), file);
                 return new ResponseEntity<>(new Mensaje("true"), HttpStatus.CREATED);
             } else {
-                return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + " no esta registrado"), HttpStatus.NOT_FOUND);
+                throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(fileDto.getIdentificacion().toString()));
             }
         } else {
-            return new ResponseEntity<>(new Mensaje("el usuario con la identificacion " + numero + " ya tiene registrada una imagen"), HttpStatus.BAD_REQUEST);
+            throw new LogicException("code", HttpStatus.BAD_REQUEST, ErrorsUtils.identificacionYaRegistrada(fileDto.getIdentificacion().toString()));
         }
 
     }

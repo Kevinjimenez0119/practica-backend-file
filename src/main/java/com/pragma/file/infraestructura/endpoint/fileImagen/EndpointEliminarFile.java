@@ -1,8 +1,10 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.Mensaje;
+import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -28,7 +30,7 @@ public class EndpointEliminarFile {
     @ApiOperation("elimina el archivo por identificacion")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "no se encontro la identificacion")
+            @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
     public ResponseEntity<?> eliminar(
             @PathVariable
@@ -40,7 +42,7 @@ public class EndpointEliminarFile {
             return new ResponseEntity<>(new Mensaje("se elimino el archivo"), HttpStatus.OK);
 
         } else {
-            return new ResponseEntity<>(new Mensaje("no se encontro el archivo del cliente con identificacion " + numero), HttpStatus.NOT_FOUND);
+            throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
         }
     }
 

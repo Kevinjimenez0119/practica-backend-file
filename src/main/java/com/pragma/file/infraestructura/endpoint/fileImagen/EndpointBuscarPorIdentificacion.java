@@ -2,10 +2,12 @@ package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.modelo.Mensaje;
+import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -34,7 +36,8 @@ public class EndpointBuscarPorIdentificacion {
     @ApiOperation("obtiene un archivo por identificacion")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK",response = FileDto.class),
-            @ApiResponse(code = 404, message = "no se encontro el archivo")
+            @ApiResponse(code = 204, message = "la identificacion no tiene ningun archivo"),
+            @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
     public ResponseEntity<?> obtenerPorIdentificacion(
             @PathVariable
@@ -49,9 +52,9 @@ public class EndpointBuscarPorIdentificacion {
         }else{
             ClienteDto clienteDto= manejadorClienteClient.obtenerCliente(numero);
             if(clienteDto != null) {
-                return new ResponseEntity<>(new Mensaje("no se encontro archivo del cliente " + numero), HttpStatus.NO_CONTENT);
+                throw new RequestException("code", HttpStatus.NO_CONTENT, ErrorsUtils.identificacionYaRegistradaSinFile(numero.toString()));
             } else {
-                return new ResponseEntity<>(new Mensaje("cliente no registrado, registrelo en el servicio cliente " + numero), HttpStatus.NOT_FOUND);
+                throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
             }
 
         }
