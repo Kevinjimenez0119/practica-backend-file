@@ -4,5 +4,5 @@ import com.pragma.file.dominio.modelo.ClienteDto;
 
 public interface ClienteInterfaceServiceClient {
 
-    ClienteDto findByIdentificacion(Integer identificacion);
+    ClienteDto findByIdentificacion(Integer identificacion) throws Exception;
 }

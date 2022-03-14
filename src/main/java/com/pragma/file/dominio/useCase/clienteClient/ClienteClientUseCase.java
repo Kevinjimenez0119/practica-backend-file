@@ -10,7 +10,7 @@ public class ClienteClientUseCase {
 
     private final ClienteInterfaceServiceClient clienteInterfaceServiceClient;
 
-    public ClienteDto obtenerCliente(Integer identificacion) {
+    public ClienteDto obtenerCliente(Integer identificacion) throws Exception {
         return clienteInterfaceServiceClient.findByIdentificacion(identificacion);
     }
 }

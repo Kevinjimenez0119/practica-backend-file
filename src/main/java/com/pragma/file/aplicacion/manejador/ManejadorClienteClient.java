@@ -9,7 +9,7 @@ public class ManejadorClienteClient {
 
     private final ClienteClientUseCase clienteClientUseCase;
 
-    public ClienteDto obtenerCliente(Integer identificacion) {
+    public ClienteDto obtenerCliente(Integer identificacion) throws Exception {
         return clienteClientUseCase.obtenerCliente(identificacion);
     }
 }

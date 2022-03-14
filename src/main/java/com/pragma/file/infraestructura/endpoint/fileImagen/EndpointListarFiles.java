@@ -36,12 +36,8 @@ public class EndpointListarFiles {
             @ApiResponse(code = 200, message = "OK", response = FileImagenDto.class),
             @ApiResponse(code = 204, message = "No hay registros")
     })
-    public ResponseEntity<?> listarFiles() {
+    public ResponseEntity<?> listarFiles() throws Exception {
         List<FileImagenDto> fileList = manejadorFileImagen.listarTodo();
-        if(fileList.isEmpty())
-        {
-            throw new LogicException("code", HttpStatus.CONFLICT, ErrorsUtils.sinRegistros());
-        }
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
 }

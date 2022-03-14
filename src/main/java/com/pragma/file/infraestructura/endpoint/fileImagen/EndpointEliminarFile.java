@@ -1,10 +1,7 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
-import com.pragma.file.aplicacion.utils.ErrorsUtils;
-import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.Mensaje;
-import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -36,14 +33,9 @@ public class EndpointEliminarFile {
             @PathVariable
             @ApiParam(value = "numero de identificacion", required = true, example = "1")
                     Integer numero
-    ) {
-        if(manejadorFileImagen.existeFile(numero) == true) {
-            manejadorFileImagen.eliminar(numero);
-            return new ResponseEntity<>(new Mensaje("se elimino el archivo"), HttpStatus.OK);
-
-        } else {
-            throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
-        }
+    ) throws Exception {
+        manejadorFileImagen.eliminar(numero);
+        return new ResponseEntity<>(new Mensaje("se elimino el archivo"), HttpStatus.OK);
     }
 
 }

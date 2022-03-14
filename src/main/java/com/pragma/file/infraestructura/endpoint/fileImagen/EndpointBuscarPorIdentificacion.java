@@ -2,12 +2,8 @@ package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
-import com.pragma.file.aplicacion.utils.ErrorsUtils;
-import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
-import com.pragma.file.dominio.modelo.Mensaje;
-import com.pragma.file.infraestructura.exceptions.RequestException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -29,9 +25,6 @@ public class EndpointBuscarPorIdentificacion {
     @Autowired
     private ManejadorFileImagen manejadorFileImagen;
 
-    @Autowired
-    private ManejadorClienteClient manejadorClienteClient;
-
     @GetMapping("/identificacion/{numero}")
     @ApiOperation("obtiene un archivo por identificacion")
     @ApiResponses({
@@ -39,25 +32,13 @@ public class EndpointBuscarPorIdentificacion {
             @ApiResponse(code = 204, message = "la identificacion no tiene ningun archivo"),
             @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
-    public ResponseEntity<?> obtenerPorIdentificacion(
+    public ResponseEntity<FileImagenDto> obtenerPorIdentificacion(
             @PathVariable
             @ApiParam(value = "numero de identificacion", required = true, example = "1")
                     Integer numero
-    ) {
-        if(manejadorFileImagen.existeFile(numero) == true)
-        {
-            FileImagenDto fileImagenDto = manejadorFileImagen.obtenerPorIdentificacion(numero);
-            return new ResponseEntity(fileImagenDto, HttpStatus.OK);
-
-        }else{
-            ClienteDto clienteDto= manejadorClienteClient.obtenerCliente(numero);
-            if(clienteDto != null) {
-                throw new RequestException("code", HttpStatus.NO_CONTENT, ErrorsUtils.identificacionYaRegistradaSinFile(numero.toString()));
-            } else {
-                throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
-            }
-
-        }
+    ) throws Exception {
+        FileImagenDto fileImagenDto = manejadorFileImagen.obtenerPorIdentificacion(numero);
+        return new ResponseEntity(fileImagenDto, HttpStatus.OK);
     }
 
 }

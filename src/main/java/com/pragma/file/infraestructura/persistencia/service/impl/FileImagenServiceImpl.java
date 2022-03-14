@@ -1,18 +1,25 @@
 package com.pragma.file.infraestructura.persistencia.service.impl;
 
+import com.pragma.file.aplicacion.utils.ErrorsUtils;
+import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
+import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
 import com.pragma.file.dominio.service.FileImagenInterfaceService;
+import com.pragma.file.infraestructura.exceptions.LogicException;
+import com.pragma.file.infraestructura.exceptions.RequestException;
 import com.pragma.file.infraestructura.mappers.FileImagenInterfaceMapper;
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
 import com.pragma.file.infraestructura.persistencia.repository.FileImagenInterfaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -29,48 +36,53 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     @Autowired
     private FileImagenInterfaceMapper fileImagenInterfaceMapper;
 
+    @Autowired
+    private ClienteInterfaceServiceClient clienteInterfaceServiceClient;
+
 
     @Override
-    public List<FileImagenDto> findAll() {
-        try {
-            return fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
-        } catch (Exception e) {
-            logger.error("Listar todos las fotos", e);
+    public List<FileImagenDto> findAll() throws Exception{
+        List<FileImagenDto> fileImagenDtoList =  fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
+        if(fileImagenDtoList.isEmpty())
+        {
+            throw new LogicException("code", HttpStatus.NO_CONTENT, ErrorsUtils.sinRegistros());
         }
-        return new ArrayList<>();
+        return fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
     }
 
     @Override
-    public void save(Integer identificacion, MultipartFile file) {
-        try {
-            byte[] bytes = file.getBytes();
-            String encodedString = Base64.getEncoder().encodeToString(bytes);
-            //creando salvando el objeto.
-            FileImagenEntidad fileImagenEntidad = FileImagenEntidad.builder()
-                    .identificacion(identificacion)
-                    .fileName(file.getOriginalFilename())
-                    .fileType(file.getContentType())
-                    .base64(encodedString)
-                    .build();
-            fileImagenInterfaceRepository.save(fileImagenEntidad);
-        } catch (Exception e) {
-            logger.error("Error al registrar la foto", e);
+    public void save(Integer identificacion, MultipartFile file) throws Exception {
+        if(!fileImagenInterfaceRepository.existsByIdentificacion(identificacion)) {
+            if (clienteInterfaceServiceClient.findByIdentificacion(identificacion) != null) {
+                byte[] bytes = file.getBytes();
+                String encodedString = Base64.getEncoder().encodeToString(bytes);
+                //creando salvando el objeto.
+                FileImagenEntidad fileImagenEntidad = FileImagenEntidad.builder()
+                        .identificacion(identificacion)
+                        .fileName(file.getOriginalFilename())
+                        .fileType(file.getContentType())
+                        .base64(encodedString)
+                        .build();
+                fileImagenInterfaceRepository.save(fileImagenEntidad);
+            } else {
+                throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
+            }
+        } else {
+            throw new RequestException("code", HttpStatus.BAD_REQUEST, ErrorsUtils.identificacionYaRegistrada(identificacion.toString()));
         }
     }
 
     @Override
-    public void delete(Integer identificacion) {
-        try {
+    public void delete(Integer identificacion) throws Exception{
+        if(existsByIdentificacion(identificacion)) {
             FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
             fileImagenInterfaceRepository.delete(fileImagenEntidad);
-        } catch (Exception e) {
-            logger.error("Error al eliminar la foto", e);
         }
     }
 
     @Override
-    public void update(Integer identificacion, MultipartFile file) {
-        try {
+    public void update(Integer identificacion, MultipartFile file) throws Exception {
+        if(existsByIdentificacion(identificacion)) {
             byte[] bytes = file.getBytes();
             String encodedString = Base64.getEncoder().encodeToString(bytes);
             FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
@@ -79,17 +91,18 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
             fileImagenEntidad.setBase64(encodedString);
             fileImagenEntidad.setIdentificacion(identificacion);
             fileImagenInterfaceRepository.save(fileImagenEntidad);
-        } catch (Exception e) {
-            logger.error("Error al actualizar la foto", e);
         }
     }
 
     @Override
-    public FileImagenDto findByIdentificacion(Integer numero) {
-        try {
+    public FileImagenDto findByIdentificacion(Integer numero) throws Exception{
+        if(fileImagenInterfaceRepository.existsByIdentificacion(numero)) {
             return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findByIdentificacion(numero));
-        } catch (Exception e) {
-            logger.error("Error en la busqueda de numero identificacion", e);
+        } else {
+            ClienteDto clienteDto= clienteInterfaceServiceClient.findByIdentificacion(numero);
+            if(clienteDto != null) {
+                throw new RequestException("code", HttpStatus.NO_CONTENT, ErrorsUtils.identificacionYaRegistradaSinFile(numero.toString()));
+            }
         }
         return null;
     }
@@ -105,12 +118,11 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public boolean existsByIdentificacion(Integer numero) {
-        try {
-            return fileImagenInterfaceRepository.existsByIdentificacion(numero);
-        } catch (Exception e) {
-            logger.error("Error al buscar file por identificacion exist", e);
+    public boolean existsByIdentificacion(Integer numero) throws Exception {
+        if(fileImagenInterfaceRepository.existsByIdentificacion(numero)) {
+            return true;
+        } else {
+            throw new LogicException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionYaRegistrada(numero.toString()));
         }
-        return false;
     }
 }
