@@ -11,6 +11,7 @@ import com.pragma.file.infraestructura.exceptions.RequestException;
 import com.pragma.file.infraestructura.mappers.FileImagenInterfaceMapper;
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
 import com.pragma.file.infraestructura.persistencia.repository.FileImagenInterfaceRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FileImagenServiceImpl implements FileImagenInterfaceService {
 
     Logger logger = LoggerFactory.getLogger(FileImagenServiceImpl.class);
