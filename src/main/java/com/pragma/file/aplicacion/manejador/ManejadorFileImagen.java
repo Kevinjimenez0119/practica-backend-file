@@ -5,7 +5,6 @@ import com.pragma.file.dominio.useCase.fileImagen.FileImagenUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor

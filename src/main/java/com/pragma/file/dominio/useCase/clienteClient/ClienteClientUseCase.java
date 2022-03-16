@@ -2,7 +2,6 @@ package com.pragma.file.dominio.useCase.clienteClient;
 
 import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
-import com.pragma.file.infraestructura.clientefeign.ClienteFeignInterfaceClient;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

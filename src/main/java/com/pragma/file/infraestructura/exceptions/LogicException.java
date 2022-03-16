@@ -1,8 +1,10 @@
 package com.pragma.file.infraestructura.exceptions;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class LogicException extends RuntimeException{
 

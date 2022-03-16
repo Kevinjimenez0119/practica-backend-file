@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -28,7 +25,7 @@ public class ClienteServiceImpl implements ClienteInterfaceServiceClient {
     private ClienteFeignInterfaceClient clienteFeignInterfaceClient;
 
     @Override
-    public ClienteDto findByIdentificacion(Integer identificacion) throws Exception{
+    public ClienteDto findByIdentificacion(Integer identificacion) throws Exception {
         ResponseEntity<Map<String, Object>> clienteResponseEntity = clienteFeignInterfaceClient.findByNumeroIdentificacion(identificacion);
         if(clienteResponseEntity.getStatusCodeValue() !=200) {
             throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));

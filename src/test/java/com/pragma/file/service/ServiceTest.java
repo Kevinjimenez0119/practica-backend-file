@@ -5,30 +5,21 @@ import com.pragma.file.data.DataTest;
 import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
-import com.pragma.file.dominio.service.FileImagenInterfaceService;
-import com.pragma.file.dominio.useCase.fileImagen.FileImagenUseCase;
 import com.pragma.file.infraestructura.exceptions.LogicException;
-import com.pragma.file.infraestructura.exceptions.RequestException;
 import com.pragma.file.infraestructura.mappers.FileImagenInterfaceMapper;
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
 import com.pragma.file.infraestructura.persistencia.repository.FileImagenInterfaceRepository;
-import com.pragma.file.infraestructura.persistencia.service.impl.ClienteServiceImpl;
 import com.pragma.file.infraestructura.persistencia.service.impl.FileImagenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 
-import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

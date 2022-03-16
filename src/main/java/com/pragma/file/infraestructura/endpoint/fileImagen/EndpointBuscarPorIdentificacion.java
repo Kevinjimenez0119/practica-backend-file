@@ -1,6 +1,5 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
-import com.pragma.file.aplicacion.manejador.ManejadorClienteClient;
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
@@ -32,7 +31,7 @@ public class EndpointBuscarPorIdentificacion {
             @ApiResponse(code = 204, message = "la identificacion no tiene ningun archivo"),
             @ApiResponse(code = 404, message = "la identificacion no esta registrada")
     })
-    public ResponseEntity<FileImagenDto> obtenerPorIdentificacion(
+    public ResponseEntity<?> obtenerPorIdentificacion(
             @PathVariable
             @ApiParam(value = "numero de identificacion", required = true, example = "1")
                     Integer numero

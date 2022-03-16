@@ -2,7 +2,6 @@ package com.pragma.file.infraestructura.persistencia.service.impl;
 
 import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.ClienteDto;
-import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
 import com.pragma.file.dominio.service.FileImagenInterfaceService;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 

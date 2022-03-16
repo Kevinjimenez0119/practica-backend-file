@@ -1,10 +1,7 @@
 package com.pragma.file.infraestructura.endpoint.fileImagen;
 
 import com.pragma.file.aplicacion.manejador.ManejadorFileImagen;
-import com.pragma.file.aplicacion.utils.ErrorsUtils;
 import com.pragma.file.dominio.modelo.FileImagenDto;
-import com.pragma.file.dominio.modelo.Mensaje;
-import com.pragma.file.infraestructura.exceptions.LogicException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

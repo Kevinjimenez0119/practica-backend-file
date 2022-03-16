@@ -1,7 +1,6 @@
 package com.pragma.file.infraestructura.persistencia.repository;
 
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
-import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
