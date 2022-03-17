@@ -11,11 +11,11 @@ public interface FileImagenInterfaceService {
 
     List<FileImagenDto> findAll() throws Exception;
 
-    void save(Integer identificacion, MultipartFile file) throws IOException, Exception;
+    boolean save(Integer identificacion, MultipartFile file) throws IOException, Exception;
 
-    void delete(Integer identificacion) throws Exception;
+    boolean delete(Integer identificacion) throws Exception;
 
-    void update(Integer identificacion, MultipartFile file) throws IOException, Exception;
+    boolean update(Integer identificacion, MultipartFile file) throws IOException, Exception;
 
     FileImagenDto findByIdentificacion(Integer numero) throws Exception;
 

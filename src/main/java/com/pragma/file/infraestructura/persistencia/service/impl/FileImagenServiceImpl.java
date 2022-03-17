@@ -50,7 +50,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public void save(Integer identificacion, MultipartFile file) throws Exception {
+    public boolean save(Integer identificacion, MultipartFile file) throws Exception {
         if(!fileImagenInterfaceRepository.existsByIdentificacion(identificacion)) {
             if (clienteInterfaceServiceClient.findByIdentificacion(identificacion) != null) {
                 byte[] bytes = file.getBytes();
@@ -63,6 +63,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
                         .base64(encodedString)
                         .build();
                 fileImagenInterfaceRepository.save(fileImagenEntidad);
+                return true;
             } else {
                 throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
             }
@@ -72,15 +73,17 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public void delete(Integer identificacion) throws Exception{
+    public boolean delete(Integer identificacion) throws Exception{
         if(existsByIdentificacion(identificacion)) {
             FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
             fileImagenInterfaceRepository.delete(fileImagenEntidad);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void update(Integer identificacion, MultipartFile file) throws Exception {
+    public boolean update(Integer identificacion, MultipartFile file) throws Exception {
         if(existsByIdentificacion(identificacion)) {
             byte[] bytes = file.getBytes();
             String encodedString = Base64.getEncoder().encodeToString(bytes);
@@ -90,7 +93,9 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
             fileImagenEntidad.setBase64(encodedString);
             fileImagenEntidad.setIdentificacion(identificacion);
             fileImagenInterfaceRepository.save(fileImagenEntidad);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -108,12 +113,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
 
     @Override
     public FileImagenDto findById(Integer id) {
-        try {
-            return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findById(id).get());
-        } catch (Exception e) {
-            logger.error("Error en la busqueda de numero identificacion", e);
-        }
-        return null;
+        return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findById(id).get());
     }
 
     @Override
@@ -121,7 +121,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
         if(fileImagenInterfaceRepository.existsByIdentificacion(numero)) {
             return true;
         } else {
-            throw new LogicException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionYaRegistrada(numero.toString()));
+            throw new LogicException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
         }
     }
 }

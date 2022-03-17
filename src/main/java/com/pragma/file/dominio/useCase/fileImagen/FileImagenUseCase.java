@@ -12,16 +12,19 @@ public class FileImagenUseCase {
 
     private final FileImagenInterfaceService fileImagenInterfaceService;
 
-    public void guardar(Integer identificacion, MultipartFile file) throws Exception {
+    public boolean guardar(Integer identificacion, MultipartFile file) throws Exception {
         fileImagenInterfaceService.save(identificacion, file);
+        return true;
     }
 
-    public void actualizar(Integer identificacion, MultipartFile file) throws Exception {
+    public boolean actualizar(Integer identificacion, MultipartFile file) throws Exception {
         fileImagenInterfaceService.update(identificacion, file);
+        return true;
     }
 
-    public void eliminar(Integer identificacion) throws Exception {
+    public boolean eliminar(Integer identificacion) throws Exception {
         fileImagenInterfaceService.delete(identificacion);
+        return true;
     }
 
     public List<FileImagenDto> listarTodo() throws Exception {
@@ -30,9 +33,5 @@ public class FileImagenUseCase {
 
     public  FileImagenDto obtenerPorIdentificacion(Integer identificacion) throws Exception {
         return fileImagenInterfaceService.findByIdentificacion(identificacion);
-    }
-
-    public boolean existeFile(Integer numero) throws Exception {
-        return fileImagenInterfaceService.existsByIdentificacion(numero);
     }
 }

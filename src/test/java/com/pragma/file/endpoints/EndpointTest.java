@@ -6,7 +6,6 @@ import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.modelo.Mensaje;
-import com.pragma.file.dominio.useCase.fileImagen.FileImagenUseCase;
 import com.pragma.file.infraestructura.endpoint.fileImagen.*;
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,8 +45,6 @@ public class EndpointTest {
     @Mock
     ManejadorFileImagen manejadorFileImagen;
 
-    @Mock
-    FileImagenUseCase fileImagenUseCase;
 
     FileImagenDto fileImagenDto;
     FileImagenEntidad fileImagenEntidad;
@@ -66,8 +63,6 @@ public class EndpointTest {
     void findByIdentificacion() throws Exception {
         ResponseEntity<?> fileResponseEntity = new ResponseEntity(fileImagenDto, HttpStatus.OK);
 
-        when(fileImagenUseCase.obtenerPorIdentificacion(fileImagenDto.getIdentificacion())).thenReturn(fileImagenDto);
-
         when(manejadorFileImagen.obtenerPorIdentificacion(fileImagenDto.getIdentificacion())).thenReturn(fileImagenDto);
 
         ResponseEntity<?> response = endpointBuscarPorIdentificacion.obtenerPorIdentificacion(fileImagenDto.getIdentificacion());
@@ -81,8 +76,6 @@ public class EndpointTest {
         fileImagenDtoList.add(fileImagenDto);
 
         ResponseEntity<?> fileResponseEntity = new ResponseEntity(fileImagenDtoList, HttpStatus.OK);
-
-        when(fileImagenUseCase.listarTodo()).thenReturn(fileImagenDtoList);
 
         when(manejadorFileImagen.listarTodo()).thenReturn(fileImagenDtoList);
 
@@ -99,6 +92,8 @@ public class EndpointTest {
 
         FileDto fileDto = FileDto.builder().identificacion(fileImagenDto.getIdentificacion()).build();
 
+        when(manejadorFileImagen.guardar(fileDto.getIdentificacion(), file)).thenReturn(true);
+
         ResponseEntity<?> response = endpointGuardarFile.guardarFile(file, fileDto);
 
         assertEquals(fileResponseEntity.getStatusCode(), response.getStatusCode());
@@ -109,6 +104,8 @@ public class EndpointTest {
         Mensaje mensaje = new Mensaje("se elimino el archivo");
 
         ResponseEntity<?> fileResponseEntity = new ResponseEntity(mensaje, HttpStatus.OK);
+
+        when(manejadorFileImagen.eliminar(fileImagenDto.getIdentificacion())).thenReturn(true);
 
         ResponseEntity<?> response = endpointEliminarFile.eliminar(fileImagenDto.getIdentificacion());
 
@@ -122,6 +119,8 @@ public class EndpointTest {
         ResponseEntity<?> fileResponseEntity = new ResponseEntity(mensaje, HttpStatus.OK);
 
         FileDto fileDto = FileDto.builder().identificacion(fileImagenDto.getIdentificacion()).build();
+
+        when(manejadorFileImagen.actualizar(fileDto.getIdentificacion(), file)).thenReturn(true);
 
         ResponseEntity<?> response = endpointActualizarFile.actualizar(fileDto, file);
 
