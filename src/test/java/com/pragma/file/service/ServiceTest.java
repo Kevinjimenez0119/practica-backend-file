@@ -7,6 +7,7 @@ import com.pragma.file.dominio.modelo.FileDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
 import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
 import com.pragma.file.dominio.service.FileImagenInterfaceService;
+import com.pragma.file.dominio.useCase.clienteClient.ClienteClientUseCase;
 import com.pragma.file.dominio.useCase.fileImagen.FileImagenUseCase;
 import com.pragma.file.infraestructura.exceptions.LogicException;
 import com.pragma.file.infraestructura.exceptions.RequestException;
@@ -37,6 +38,9 @@ public class ServiceTest {
 
     @Mock
     FileImagenInterfaceService fileImagenInterfaceService;
+
+    @Mock
+    ClienteClientUseCase clienteClientUseCase;
 
     @InjectMocks
     FileImagenServiceImpl fileImagenService;
@@ -100,13 +104,13 @@ public class ServiceTest {
 
         when(fileImagenInterfaceRepository.findAll()).thenReturn(fileImagenEntidadList);
 
-        assertThrows(LogicException.class, () -> fileImagenService.findAll());
+        when(fileImagenInterfaceService.findAll()).thenReturn(fileImagenDtoList);
+
+        assertThrows(LogicException.class, () -> fileImagenUseCase.listarTodo());
     }
 
     @Test
     void findByIdentificacion() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
-
         when(fileImagenInterfaceRepository.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(fileImagenEntidad);
 
         when(fileImagenInterfaceMapper.toFileImagenDto(fileImagenEntidad)).thenReturn(fileImagenDto);
@@ -116,6 +120,10 @@ public class ServiceTest {
         FileImagenDto fileActual = fileImagenService.findByIdentificacion(clienteDto.getIdentificacion());
 
         assertEquals(fileImagenDto, fileActual);
+
+        when(fileImagenService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
+
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
 
         when(fileImagenService.findByIdentificacion(fileImagenDto.getIdentificacion())).thenReturn(fileImagenDto);
 
@@ -139,19 +147,19 @@ public class ServiceTest {
 
     @Test
     void findByIdentificacionExceptionExist() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
 
-        when(clienteInterfaceServiceClient.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(clienteDto);
+        when(clienteClientUseCase.obtenerCliente(clienteDto.getIdentificacion())).thenReturn(clienteDto);
 
-        assertThrows(RequestException.class, () -> fileImagenService.findByIdentificacion(clienteDto.getIdentificacion()));
+        assertThrows(RequestException.class, () -> fileImagenUseCase.obtenerPorIdentificacion(clienteDto.getIdentificacion()));
 
     }
 
     @Test
     void ExceptionExist() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
 
-        assertThrows(LogicException.class, () -> fileImagenService.existsByIdentificacion(clienteDto.getIdentificacion()));
+        assertThrows(LogicException.class, () -> fileImagenUseCase.existsByIdentificacion(clienteDto.getIdentificacion()));
 
     }
 
@@ -159,15 +167,15 @@ public class ServiceTest {
     void save() throws Exception {
         FileDto fileDto = FileDto.builder().identificacion(fileImagenDto.getIdentificacion()).build();
 
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
-
-        when(clienteInterfaceServiceClient.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(clienteDto);
-
         fileImagenInterfaceRepository.save(fileImagenEntidad);
 
         boolean response = fileImagenService.save(fileDto.getIdentificacion(), file);
 
         assertEquals(true, response);
+
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
+
+        when(clienteClientUseCase.obtenerCliente(clienteDto.getIdentificacion())).thenReturn(clienteDto);
 
         when(fileImagenService.save(fileDto.getIdentificacion(), file)).thenReturn(true);
 
@@ -180,26 +188,22 @@ public class ServiceTest {
 
     @Test
     void saveExceptionExist() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
 
-        assertThrows(RequestException.class, () -> fileImagenService.save(fileImagenDto.getIdentificacion(), file));
+        assertThrows(RequestException.class, () -> fileImagenUseCase.guardar(fileImagenDto.getIdentificacion(), file));
     }
 
     @Test
     void saveExceptionExistCliente() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(false);
 
-        when(clienteInterfaceServiceClient.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(clienteDto = null);
+        when(clienteClientUseCase.obtenerCliente(clienteDto.getIdentificacion())).thenReturn(clienteDto = null);
 
-        assertThrows(RequestException.class, () -> fileImagenService.save(fileImagenDto.getIdentificacion(), file));
+        assertThrows(RequestException.class, () -> fileImagenUseCase.guardar(fileImagenDto.getIdentificacion(), file));
     }
 
     @Test
     void delete() throws Exception {
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
-
-        when(fileImagenService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
-
         when(fileImagenInterfaceRepository.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(fileImagenEntidad);
 
         fileImagenInterfaceRepository.delete(fileImagenEntidad);
@@ -207,6 +211,10 @@ public class ServiceTest {
         boolean response = fileImagenService.delete(clienteDto.getIdentificacion());
 
         assertEquals(true, response);
+
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
+
+        when(fileImagenUseCase.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
 
         when(fileImagenInterfaceService.delete(fileImagenDto.getIdentificacion())).thenReturn(true);
 
@@ -219,10 +227,6 @@ public class ServiceTest {
     void update() throws Exception {
         FileDto fileDto = FileDto.builder().identificacion(fileImagenDto.getIdentificacion()).build();
 
-        when(fileImagenInterfaceRepository.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
-
-        when(fileImagenService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
-
         when(fileImagenInterfaceRepository.findByIdentificacion(clienteDto.getIdentificacion())).thenReturn(fileImagenEntidad);
 
         fileImagenInterfaceRepository.save(fileImagenEntidad);
@@ -230,6 +234,10 @@ public class ServiceTest {
         boolean response = fileImagenService.update(fileDto.getIdentificacion(), file);
 
         assertEquals(true, response);
+
+        when(fileImagenInterfaceService.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
+
+        when(fileImagenUseCase.existsByIdentificacion(clienteDto.getIdentificacion())).thenReturn(true);
 
         when(fileImagenService.update(fileDto.getIdentificacion(), file)).thenReturn(true);
 

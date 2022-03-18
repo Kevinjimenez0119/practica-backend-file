@@ -28,7 +28,7 @@ public class ClienteServiceImpl implements ClienteInterfaceServiceClient {
     public ClienteDto findByIdentificacion(Integer identificacion) throws Exception {
         ResponseEntity<Map<String, Object>> clienteResponseEntity = clienteFeignInterfaceClient.findByNumeroIdentificacion(identificacion);
         if(clienteResponseEntity.getStatusCodeValue() !=200) {
-            throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
+            throw new RequestException(404, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
         }
         ClienteDto clienteDto = maptoClienteDto(clienteResponseEntity.getBody());
         return clienteDto;

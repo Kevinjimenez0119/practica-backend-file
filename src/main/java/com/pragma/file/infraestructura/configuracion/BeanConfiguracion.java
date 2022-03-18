@@ -14,8 +14,8 @@ public class BeanConfiguracion {
 
     //Bean de FileImagen
     @Bean
-    public FileImagenUseCase fileImagenUseCase(FileImagenInterfaceService fileImagenInterfaceService) {
-        return new FileImagenUseCase(fileImagenInterfaceService);
+    public FileImagenUseCase fileImagenUseCase(FileImagenInterfaceService fileImagenInterfaceService, ClienteClientUseCase clienteClientUseCase) {
+        return new FileImagenUseCase(fileImagenInterfaceService, clienteClientUseCase);
     }
 
     @Bean

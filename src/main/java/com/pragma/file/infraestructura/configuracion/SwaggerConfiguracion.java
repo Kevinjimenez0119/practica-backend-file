@@ -19,8 +19,8 @@ public class SwaggerConfiguracion {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("Cliente REST API")
-                        .description("Microservicio de clientes")
+                        .title("File REST API")
+                        .description("Microservicio de archivos")
                         .termsOfServiceUrl("http://en.wikipedia.org/wiki/Terms_of_service")
                         .contact(new Contact("Kevin Jimenez", "", "kevin.jimenez@pragma.com.co"))
                         .license("Apache License Version 2.0")

@@ -35,80 +35,50 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     @Autowired
     private FileImagenInterfaceMapper fileImagenInterfaceMapper;
 
-    @Autowired
-    private ClienteInterfaceServiceClient clienteInterfaceServiceClient;
-
-
     @Override
     public List<FileImagenDto> findAll() throws Exception{
         List<FileImagenDto> fileImagenDtoList =  fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
-        if(fileImagenDtoList.isEmpty())
-        {
-            throw new LogicException("code", HttpStatus.NO_CONTENT, ErrorsUtils.sinRegistros());
-        }
-        return fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
+        return fileImagenDtoList;
     }
 
     @Override
     public boolean save(Integer identificacion, MultipartFile file) throws Exception {
-        if(!fileImagenInterfaceRepository.existsByIdentificacion(identificacion)) {
-            if (clienteInterfaceServiceClient.findByIdentificacion(identificacion) != null) {
-                byte[] bytes = file.getBytes();
-                String encodedString = Base64.getEncoder().encodeToString(bytes);
-                //creando salvando el objeto.
-                FileImagenEntidad fileImagenEntidad = FileImagenEntidad.builder()
-                        .identificacion(identificacion)
-                        .fileName(file.getOriginalFilename())
-                        .fileType(file.getContentType())
-                        .base64(encodedString)
-                        .build();
-                fileImagenInterfaceRepository.save(fileImagenEntidad);
-                return true;
-            } else {
-                throw new RequestException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
-            }
-        } else {
-            throw new RequestException("code", HttpStatus.BAD_REQUEST, ErrorsUtils.identificacionYaRegistrada(identificacion.toString()));
-        }
+        byte[] bytes = file.getBytes();
+        String encodedString = Base64.getEncoder().encodeToString(bytes);
+        //creando salvando el objeto.
+        FileImagenEntidad fileImagenEntidad = FileImagenEntidad.builder()
+                .identificacion(identificacion)
+                .fileName(file.getOriginalFilename())
+                .fileType(file.getContentType())
+                .base64(encodedString)
+                .build();
+        fileImagenInterfaceRepository.save(fileImagenEntidad);
+        return true;
     }
 
     @Override
     public boolean delete(Integer identificacion) throws Exception{
-        if(existsByIdentificacion(identificacion)) {
-            FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
-            fileImagenInterfaceRepository.delete(fileImagenEntidad);
-            return true;
-        }
-        return false;
+        FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
+        fileImagenInterfaceRepository.delete(fileImagenEntidad);
+        return true;
     }
 
     @Override
     public boolean update(Integer identificacion, MultipartFile file) throws Exception {
-        if(existsByIdentificacion(identificacion)) {
-            byte[] bytes = file.getBytes();
-            String encodedString = Base64.getEncoder().encodeToString(bytes);
-            FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
-            fileImagenEntidad.setFileName(file.getOriginalFilename());
-            fileImagenEntidad.setFileType(file.getContentType());
-            fileImagenEntidad.setBase64(encodedString);
-            fileImagenEntidad.setIdentificacion(identificacion);
-            fileImagenInterfaceRepository.save(fileImagenEntidad);
-            return true;
-        }
-        return false;
+        byte[] bytes = file.getBytes();
+        String encodedString = Base64.getEncoder().encodeToString(bytes);
+        FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
+        fileImagenEntidad.setFileName(file.getOriginalFilename());
+        fileImagenEntidad.setFileType(file.getContentType());
+        fileImagenEntidad.setBase64(encodedString);
+        fileImagenEntidad.setIdentificacion(identificacion);
+        fileImagenInterfaceRepository.save(fileImagenEntidad);
+        return true;
     }
 
     @Override
     public FileImagenDto findByIdentificacion(Integer numero) throws Exception{
-        if(fileImagenInterfaceRepository.existsByIdentificacion(numero)) {
-            return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findByIdentificacion(numero));
-        } else {
-            ClienteDto clienteDto= clienteInterfaceServiceClient.findByIdentificacion(numero);
-            if(clienteDto != null) {
-                throw new RequestException("code", HttpStatus.NO_CONTENT, ErrorsUtils.identificacionYaRegistradaSinFile(numero.toString()));
-            }
-        }
-        return null;
+        return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findByIdentificacion(numero));
     }
 
     @Override
@@ -118,10 +88,6 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
 
     @Override
     public boolean existsByIdentificacion(Integer numero) throws Exception {
-        if(fileImagenInterfaceRepository.existsByIdentificacion(numero)) {
-            return true;
-        } else {
-            throw new LogicException("code", HttpStatus.NOT_FOUND, ErrorsUtils.identificacionNoRegistrada(numero.toString()));
-        }
+        return fileImagenInterfaceRepository.existsByIdentificacion(numero);
     }
 }
