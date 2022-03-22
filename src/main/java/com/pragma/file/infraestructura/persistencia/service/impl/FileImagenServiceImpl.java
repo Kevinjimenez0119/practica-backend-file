@@ -1,12 +1,7 @@
 package com.pragma.file.infraestructura.persistencia.service.impl;
 
-import com.pragma.file.aplicacion.utils.ErrorsUtils;
-import com.pragma.file.dominio.modelo.ClienteDto;
 import com.pragma.file.dominio.modelo.FileImagenDto;
-import com.pragma.file.dominio.service.ClienteInterfaceServiceClient;
 import com.pragma.file.dominio.service.FileImagenInterfaceService;
-import com.pragma.file.infraestructura.exceptions.LogicException;
-import com.pragma.file.infraestructura.exceptions.RequestException;
 import com.pragma.file.infraestructura.mappers.FileImagenInterfaceMapper;
 import com.pragma.file.infraestructura.persistencia.entity.FileImagenEntidad;
 import com.pragma.file.infraestructura.persistencia.repository.FileImagenInterfaceRepository;
@@ -14,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +30,8 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     private FileImagenInterfaceMapper fileImagenInterfaceMapper;
 
     @Override
-    public List<FileImagenDto> findAll() throws Exception{
-        List<FileImagenDto> fileImagenDtoList =  fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
-        return fileImagenDtoList;
+    public List<FileImagenDto> findAll() {
+        return fileImagenInterfaceMapper.toFileImagenListDto(fileImagenInterfaceRepository.findAll());
     }
 
     @Override
@@ -57,7 +50,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public boolean delete(Integer identificacion) throws Exception{
+    public boolean delete(Integer identificacion) {
         FileImagenEntidad fileImagenEntidad = fileImagenInterfaceRepository.findByIdentificacion(identificacion);
         fileImagenInterfaceRepository.delete(fileImagenEntidad);
         return true;
@@ -77,7 +70,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public FileImagenDto findByIdentificacion(Integer numero) throws Exception{
+    public FileImagenDto findByIdentificacion(Integer numero) {
         return fileImagenInterfaceMapper.toFileImagenDto(fileImagenInterfaceRepository.findByIdentificacion(numero));
     }
 
@@ -87,7 +80,7 @@ public class FileImagenServiceImpl implements FileImagenInterfaceService {
     }
 
     @Override
-    public boolean existsByIdentificacion(Integer numero) throws Exception {
+    public boolean existsByIdentificacion(Integer numero) {
         return fileImagenInterfaceRepository.existsByIdentificacion(numero);
     }
 }

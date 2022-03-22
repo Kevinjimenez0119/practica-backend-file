@@ -24,10 +24,9 @@ public class ClienteServiceImpl implements ClienteInterfaceServiceClient {
 
     @HystrixCommand(fallbackMethod = "circuitFindByIdentificacion")
     @Override
-    public ClienteDto findByIdentificacion(Integer identificacion) throws Exception {
+    public ClienteDto findByIdentificacion(Integer identificacion) {
         ResponseEntity<Map<String, Object>> clienteResponseEntity = clienteFeignInterfaceClient.findByNumeroIdentificacion(identificacion);
-        ClienteDto clienteDto = maptoClienteDto(clienteResponseEntity.getBody());
-        return clienteDto;
+        return maptoClienteDto(clienteResponseEntity.getBody());
     }
 
     public ClienteDto circuitFindByIdentificacion(Integer identificacion) {
@@ -35,7 +34,7 @@ public class ClienteServiceImpl implements ClienteInterfaceServiceClient {
     }
 
     public ClienteDto maptoClienteDto(Map<String, Object> clienteMap) {
-        ClienteDto clienteDto = ClienteDto.builder()
+        return ClienteDto.builder()
                 .id(Integer.parseInt(clienteMap.get("id").toString()))
                 .nombres(clienteMap.get("nombres").toString())
                 .apellidos(clienteMap.get("apellidos").toString())
@@ -44,6 +43,5 @@ public class ClienteServiceImpl implements ClienteInterfaceServiceClient {
                 .tipoDocumento(clienteMap.get("tipoDocumento").toString())
                 .edad(Integer.parseInt(clienteMap.get("edad").toString()))
                 .build();
-        return clienteDto;
     }
 }

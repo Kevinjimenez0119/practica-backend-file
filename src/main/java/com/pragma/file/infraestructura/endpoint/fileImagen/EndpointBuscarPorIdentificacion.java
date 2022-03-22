@@ -37,7 +37,7 @@ public class EndpointBuscarPorIdentificacion {
                     Integer numero
     ) throws Exception {
         FileImagenDto fileImagenDto = manejadorFileImagen.obtenerPorIdentificacion(numero);
-        return new ResponseEntity(fileImagenDto, HttpStatus.OK);
+        return new ResponseEntity<>(fileImagenDto, HttpStatus.OK);
     }
 
 }
