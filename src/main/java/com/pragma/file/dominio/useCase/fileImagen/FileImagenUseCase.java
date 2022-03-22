@@ -8,7 +8,6 @@ import com.pragma.file.dominio.useCase.clienteClient.ClienteClientUseCase;
 import com.pragma.file.infraestructura.exceptions.LogicException;
 import com.pragma.file.infraestructura.exceptions.RequestException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -58,9 +57,10 @@ public class FileImagenUseCase {
             ClienteDto clienteDto= clienteClientUseCase.obtenerCliente(identificacion);
             if(clienteDto != null) {
                 throw new RequestException(204, ErrorsUtils.identificacionYaRegistradaSinFile(identificacion.toString()));
+            } else {
+                throw new RequestException(404, ErrorsUtils.identificacionNoRegistrada(identificacion.toString()));
             }
         }
-        return null;
     }
 
     public boolean existsByIdentificacion(Integer identificacion) throws Exception {
